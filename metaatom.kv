@@ -1,0 +1,258 @@
+BoxLayout:
+
+    titlesize: '20sp'
+    fontsize: '15sp'
+    paddingsize: '15sp'
+
+    orientation: 'vertical'
+    padding: root.paddingsize
+
+    # Main Box: Parameter Control / MetaAtom / Phase Control
+    BoxLayout:
+        orientation: 'horizontal'
+
+        # Parameter Control Box
+        BoxLayout:
+            orientation: 'vertical'
+
+            # Slider Box
+            BoxLayout:
+                orientation: 'horizontal'
+
+            ########################################################################    Parameter Slider
+
+                # Lx1
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (1, 0.2)
+                        Label:
+                            text: 'Lx1'
+                            font_size: root.titlesize
+                            font_name: 'fonts/normal.ttf'
+
+                        Label:
+                            text: '{:.3f}'.format(lx1slider.value)
+                            font_size: root.fontsize
+                            font_name: 'fonts/normal.ttf'
+
+                    Slider:
+                        id: lx1slider
+                        orientation: 'vertical'
+                        min: 0.1
+                        max: 0.9
+                        value: 0.5
+                        step: 0.001
+                        on_value: app.makePrediction([self.value, ly1slider.value, lx2slider.value, ly2slider.value])
+                        on_value:
+                            if app.mode == 'Rectangle': ly1slider.value, lx2slider.value, ly2slider.value = self.value, self.value, self.value
+                            elif app.mode == 'Normal Cross': lx2slider.value = self.value
+
+                # Ly1
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (1, 0.2)
+                        Label:
+                            text: 'Ly1'
+                            font_size: root.titlesize
+                            font_name: 'fonts/normal.ttf'
+
+                        Label:
+                            text: '{:.3f}'.format(ly1slider.value)
+                            font_size: root.fontsize
+                            font_name: 'fonts/normal.ttf'
+
+                    Slider:
+                        id: ly1slider
+                        orientation: 'vertical'
+                        min: 0.1
+                        max: 0.9
+                        value: 0.5
+                        step: 0.001
+                        on_value: app.makePrediction([lx1slider.value, self.value, lx2slider.value, ly2slider.value])
+                        on_value:
+                            if app.mode == 'Normal Cross': ly2slider.value = self.value
+
+                # Lx2
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (1, 0.2)
+                        Label:
+                            text: 'Lx2'
+                            font_size: root.titlesize
+                            font_name: 'fonts/normal.ttf'
+
+                        Label:
+                            text: '{:.3f}'.format(lx2slider.value)
+                            font_size: root.fontsize
+                            font_name: 'fonts/normal.ttf'
+
+                    Slider:
+                        id: lx2slider
+                        orientation: 'vertical'
+                        min: 0.1
+                        max: 0.9
+                        value: 0.5
+                        step: 0.001
+                        on_value: app.makePrediction([lx1slider.value, ly1slider.value, self.value, ly2slider.value])
+
+                # Ly2
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (1, 0.2)
+                        Label:
+                            text: 'Ly2'
+                            font_size: root.titlesize
+                            font_name: 'fonts/normal.ttf'
+
+                        Label:
+                            text: '{:.3f}'.format(ly2slider.value)
+                            font_size: root.fontsize
+                            font_name: 'fonts/normal.ttf'
+
+                    Slider:
+                        id: ly2slider
+                        orientation: 'vertical'
+                        min: 0.1
+                        max: 0.9
+                        value: 0.5
+                        step: 0.001
+                        on_value: app.makePrediction([lx1slider.value, ly1slider.value, lx2slider.value, self.value])
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (1, .1)
+
+                # Rectangle
+                ToggleButton:
+                    id: rectanglebutton
+                    group: 'modes'
+                    text: 'Rectangle'
+                    font_size: root.fontsize
+                    font_name: 'fonts/normal.ttf'
+                    on_press: app.toggleSliders()
+
+                # Sym Cross
+                ToggleButton:
+                    id: normalcrossbutton
+                    group: 'modes'
+                    text: 'Normal Cross'
+                    font_size: root.fontsize
+                    font_name: 'fonts/normal.ttf'
+                    on_press: app.toggleSliders()
+
+
+        ########################################################################    Metaatom
+
+        # Metaatom
+        Widget:
+            #size_hint: (1., 0.85)
+            size_hint: (1., 0.99)
+            id: metaatom
+            canvas:
+                Color:
+                    rgb: (0.1, 0.1, 0.1)
+
+                # periodx = 0.68
+                # periody = 0.57
+                Rectangle:
+                    group: 'atom'
+                    pos: self.pos
+                    size: self.size
+
+                # Rectangle 1
+                Color:
+                    rgb: 0, 0.65, 0.83
+
+                Rectangle:
+                    group: 'box1'
+                    pos: (self.x + self.width / 2 - self.width / 4, self.y + self.height / 2 - self.height / 4)  # center the blue rectangle
+                    size: (self.width / 2, self.height / 2)  # smaller size than red rectangle
+
+                # Rectangle 2
+                Color:
+                    rgb: 0, 0.80, 0.90
+
+                Rectangle:
+                    group: 'box2'
+                    pos: (self.x + self.width / 2 - self.width / 4, self.y + self.height / 2 - self.height / 4)  # center the blue rectangle
+                    size: (self.width / 2, self.height / 2)  # smaller size than red rectangle
+
+        ########################################################################    Reflectivity
+        # 1064nm
+        Widget:
+            id: refind1
+            size_hint: (0.1, 0.001)
+            canvas:
+                Color:
+                    rgb: 1, 0, 0
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        # 1550nm
+        Widget:
+            id: refind2
+            size_hint: (.1, 0.001)
+            canvas:
+                Color:
+                    rgb: 0, 0, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+
+        ########################################################################    Phase Slider
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (0.5, 1)
+
+            Label:
+                text: '1064 nm'
+                font_size: root.titlesize
+                font_name: 'fonts/normal.ttf'
+
+            Label:
+                id: phase1text
+                text: 'Phase = 0 rad'
+                font_size: root.fontsize
+                font_name: 'fonts/normal.ttf'
+
+            Label: 
+                id: reflabel1
+                text: 'Reflectivity = '
+                font_size: root.fontsize
+                font_name: 'fonts/normal.ttf'
+
+            Label:
+                text: '1550 nm'
+                font_size: root.titlesize
+                font_name: 'fonts/normal.ttf'
+            
+            Label:
+                id: phase2text
+                text: 'Phase = 0 rad'
+                font_size: root.fontsize
+                font_name: 'fonts/normal.ttf'
+
+            Label: 
+                id: reflabel2
+                text: 'Reflectivity = '
+                font_size: root.fontsize
+                font_name: 'fonts/normal.ttf'
+
+
+
+
